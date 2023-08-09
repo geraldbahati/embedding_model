@@ -1,0 +1,10 @@
+streamlit # for the web app
+pypdf2 # for pdf reading
+langchain # for language detection
+python-dotenv # for environment variables
+faiss-cpu # for similarity search
+openai # for text generation 
+huggingface_hub # for text generation
+tiktoken # for text generation
+InstructorEmbedding # for text generation
+sentence_transformers # for text generation
