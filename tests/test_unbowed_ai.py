@@ -11,6 +11,7 @@ from langchain.llms import OpenAI
 from langchain.llms.fake import FakeListLLM
 from langchain.prompts import PromptTemplate
 
+
 from unbowed_ai import Answer, Docs, PromptCollection, Text
 from unbowed_ai.chains import get_score
 from unbowed_ai.readers import read_doc

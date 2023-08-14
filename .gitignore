@@ -127,6 +127,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+unbowed_ai_venv/
 
 # Spyder project settings
 .spyderproject
