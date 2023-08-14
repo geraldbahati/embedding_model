@@ -1,2 +1,2 @@
 # multiple-pdf-chat
-Fine tuning ai model to the pdf documents
+Fine tuning ai model to answer question based on pdf content
