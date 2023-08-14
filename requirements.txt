@@ -8,3 +8,17 @@ huggingface_hub # for text generation
 tiktoken # for text generation
 InstructorEmbedding # for text generation
 sentence_transformers # for text generation
+python-docx # for doc reading
+textract # for doc reading
+python-pptx # for ppt reading
+pandas # for data manipulation
+xlrd # for excel reading
+openpyxl # for excel reading
+pytest # for testing
+pre-commit # for testing
+requests # for api calls
+pyzotero # for zotero api calls
+pymupdf # for pdf reading
+build # for building
+types-requests # for api calls
+numpy # for data manipulation
