@@ -22,3 +22,5 @@ pymupdf # for pdf reading
 build # for building
 types-requests # for api calls
 numpy # for data manipulation
+html2text # for html reading
+nest_asyncio # for async calls
