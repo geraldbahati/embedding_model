@@ -24,7 +24,7 @@ class ZoteroPaper(BaseModel):
     title : str
         The title of the item.
     pdf : Path
-        The path to the PDF for the item (pass to `paperqa.Docs`)
+        The path to the PDF for the item (pass to `unbowed-ai.Docs`)
     num_pages : int
         The number of pages in the PDF.
     zotero_key : str
@@ -50,16 +50,7 @@ class ZoteroPaper(BaseModel):
 
 
 class ZoteroDB(zotero.Zotero):
-    """An extension of pyzotero.zotero.Zotero to interface with paperqa.
-
-    This class automatically reads in your `ZOTERO_USER_ID` and `ZOTERO_API_KEY`
-    from your environment variables. If you do not have these, see
-    step 2 of https://github.com/urschrei/pyzotero#quickstart.
-
-    This class will download PDFs from your Zotero library and store them in
-    `~/.paperqa/zotero` by default. To use this class, call the `iterate`
-    method, which returns a `paperqa.Docs` object.
-    """
+    """An extension of pyzotero.zotero.Zotero to interface with unbowed-ai"""
 
     def __init__(
         self,
@@ -153,7 +144,7 @@ class ZoteroDB(zotero.Zotero):
 
         For each item, it will return a `ZoteroPaper` object, which has the following fields:
 
-            - `pdf`: The path to the PDF for the item (pass to `paperqa.Docs`)
+            - `pdf`: The path to the PDF for the item (pass to `unbowed-ai.Docs`)
             - `key`: The citation key.
             - `title`: The title of the item.
             - `details`: The full item details from Zotero.
