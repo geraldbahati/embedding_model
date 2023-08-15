@@ -24,9 +24,9 @@ CallbackFactory = Callable[[str], Union[None, List[BaseCallbackHandler]]]
 
 
 class Doc(BaseModel):
-    docName: str
+    docname: str
     citation: str
-    docKey: DocKey
+    dockey: DocKey
 
 
 class Text(BaseModel):
@@ -51,7 +51,6 @@ class PromptCollection(BaseModel):
             raise ValueError(
                 f"Summary prompt can only have variables: {summary_prompt.input_variables}"
             )
-
         return v
 
     @validator("qa")
@@ -60,7 +59,6 @@ class PromptCollection(BaseModel):
             raise ValueError(
                 f"QA prompt can only have variables: {qa_prompt.input_variables}"
             )
-
         return v
 
     @validator("select")
@@ -71,52 +69,57 @@ class PromptCollection(BaseModel):
             raise ValueError(
                 f"Select prompt can only have variables: {select_paper_prompt.input_variables}"
             )
-
         return v
 
     @validator("pre")
     def check_pre(cls, v: Optional[PromptTemplate]) -> Optional[PromptTemplate]:
         if v is not None:
-            if set(v.input_variables) != set(["questions"]):
+            if set(v.input_variables) != set(["question"]):
                 raise ValueError("Pre prompt must have input variables: question")
-
         return v
 
     @validator("post")
     def check_post(cls, v: Optional[PromptTemplate]) -> Optional[PromptTemplate]:
         if v is not None:
+            # kind of a hack to get list of attributes in answer
             attrs = [a.name for a in Answer.__fields__.values()]
             if not set(v.input_variables).issubset(attrs):
-                raise ValueError(f"Post prompt can only have variables: {attrs}")
-
+                raise ValueError(f"Post prompt must have input variables: {attrs}")
         return v
 
 
 class Context(BaseModel):
-    """A class that holds the context for a question"""
+    """A class to hold the context of a question."""
 
     context: str
     text: Text
     score: int = 5
 
 
+def __str__(self) -> str:
+    """Return the context as a string."""
+    return self.context
+
+
 class Answer(BaseModel):
-    """A class that holds the answer to a question"""
+    """A class to hold the answer to a question."""
 
     question: str
     answer: str = ""
     context: str = ""
     contexts: List[Context] = []
     references: str = ""
-    docKey_filter: Optional[Set[DocKey]] = None
+    formatted_answer: str = ""
+    dockey_filter: Optional[Set[DocKey]] = None
     summary_length: str = "about 100 words"
     answer_length: str = "about 100 words"
     memory: Optional[str] = None
-
     # these two below are for convenience
+    # and are not set. But you can set them
+    # if you want to use them.
     cost: Optional[float] = None
     token_counts: Optional[Dict[str, List[int]]] = None
 
     def __str__(self) -> str:
-        """Return the answer as a string"""
+        """Return the answer as a string."""
         return self.formatted_answer
