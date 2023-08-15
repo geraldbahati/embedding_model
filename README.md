@@ -5,6 +5,7 @@ This repository contains a versatile embedding model that's designed to work sea
 ## Output Exmaple
 **Question:**
 What is The Meaning of Modularity?
+
 Answer given with reference
 
 **Response**
@@ -23,18 +24,32 @@ References
 
 ### Usage
 
-Using the embedding model with OpenAI support is straightforward. Here's how you can set it up and run it:
+Make sure you have set your OPENAI_API_KEY environment variable.
+
+Using the embedding model with OpenAI support is straightforward. To use unbowed_ai, you need to have a list of paths (valid extensions include: `.pdf`, `.txt`) and a list of citations (strings) that correspond to the paths. You can then use the `Docs` class to add the documents and then query them. Here's how you can set it up and run it:
 
 #### 1. **Setup**
 
 #### Initialization
 
-Start by initializing the main components - `Docs` for managing your document embeddings and `ZoteroDB` to interact with Zotero:
+Start by initializing the main components - `Docs` for managing your document embeddings:
 
 ```python
+"""
+Ensure you have set your OPENAI_API_KEY environment variable
+
+from dotenv import load_dotenv
+
+load_dotenv()
+"""
+
 from unbowed_ai import Docs
-from unbowed_ai.contrib import ZoteroDB
 
 docs = Docs()
-zotero = ZoteroDB(library_type="user")
+for d in my_docs:
+    docs.add(d)
+
+answer = docs.query("What is The Meaning of Modularity?")
+print(answer.formatted_answer)
 ```
+That's it 😑.
