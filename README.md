@@ -41,6 +41,8 @@ Ensure you have set your OPENAI_API_KEY environment variable
 from dotenv import load_dotenv
 
 load_dotenv()
+
+my_docs = [...] a list of paths to your documents(.pdf, .txt)
 """
 
 from unbowed_ai import Docs
@@ -52,4 +54,16 @@ for d in my_docs:
 answer = docs.query("What is The Meaning of Modularity?")
 print(answer.formatted_answer)
 ```
-That's it 😑.
+
+##### Output
+
+**Modularity** refers to the property of a system that has been decomposed into a set of cohesive and loosely coupled modules. These modules are the elementary and indivisible units of software that can be reused across applications. Modularity allows for the organization of classes and objects into separate modules, which can be developed and refined independently. It also affects the locality of reference and the paging behavior of a virtual memory system. Modularity decisions can be influenced by various factors such as work assignments, subcontractor relationships, documentation and configuration management, and security considerations.
+
+**Source**:
+(Booch_Objectorientedanalysisand_20080831_7G95NMRG pages 81-82)
+
+### References
+
+1. Booch, Grady, Ivar Jacobson, and James Rumbaugh. *Object-Oriented Analysis and Design with Applications*. Third Edition. The Addison-Wesley Object Technology Series. 2023.
+
+That's it 😁
