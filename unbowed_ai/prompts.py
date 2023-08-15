@@ -1,7 +1,7 @@
 from langchain.prompts import PromptTemplate
 
 summary_prompt = PromptTemplate(
-    input_variables=['text','citation','question', 'summary_length'],
+    input_variables=["text", "citation", "question", "summary_length"],
     template="Summarize the text below to help answer the question. "
     "Do not directly answer the question, instead summarize "
     "to give evidence to help answer the question. "

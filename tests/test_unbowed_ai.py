@@ -11,12 +11,16 @@ from langchain.llms import OpenAI
 from langchain.llms.fake import FakeListLLM
 from langchain.prompts import PromptTemplate
 
-
 from unbowed_ai import Answer, Docs, PromptCollection, Text
 from unbowed_ai.chains import get_score
 from unbowed_ai.readers import read_doc
 from unbowed_ai.types import Doc
-from unbowed_ai.utils import maybe_is_html, maybe_is_text, name_in_text, strings_similarity
+from unbowed_ai.utils import (
+    maybe_is_html,
+    maybe_is_text,
+    name_in_text,
+    strings_similarity,
+)
 
 
 class TestHandler(AsyncCallbackHandler):

@@ -35,6 +35,7 @@ class Text(BaseModel):
     doc: Doc
     embeddings: Optional[List[float]] = None
 
+
 class PromptCollection(BaseModel):
     summary: PromptTemplate = summary_prompt
     qa: PromptTemplate = qa_prompt
@@ -50,43 +51,46 @@ class PromptCollection(BaseModel):
             raise ValueError(
                 f"Summary prompt can only have variables: {summary_prompt.input_variables}"
             )
-        
+
         return v
-    
+
     @validator("qa")
     def check_qa(cls, v: PromptTemplate) -> PromptTemplate:
         if not set(v.input_variables).issubset(set(qa_prompt.input_variables)):
             raise ValueError(
                 f"QA prompt can only have variables: {qa_prompt.input_variables}"
             )
-        
+
         return v
-    
+
     @validator("select")
     def check_select(cls, v: PromptTemplate) -> PromptTemplate:
-        if not set(v.input_variables).issubset(set(select_paper_prompt.input_variables)):
+        if not set(v.input_variables).issubset(
+            set(select_paper_prompt.input_variables)
+        ):
             raise ValueError(
                 f"Select prompt can only have variables: {select_paper_prompt.input_variables}"
             )
-        
+
         return v
-    
+
     @validator("pre")
     def check_pre(cls, v: Optional[PromptTemplate]) -> Optional[PromptTemplate]:
         if v is not None:
             if set(v.input_variables) != set(["questions"]):
                 raise ValueError("Pre prompt must have input variables: question")
-            
+
         return v
-    
+
     @validator("post")
     def check_post(cls, v: Optional[PromptTemplate]) -> Optional[PromptTemplate]:
         if v is not None:
             attrs = [a.name for a in Answer.__fields__.values()]
             if not set(v.input_variables).issubset(attrs):
                 raise ValueError(f"Post prompt can only have variables: {attrs}")
-            
+
         return v
+
 
 class Context(BaseModel):
     """A class that holds the context for a question"""

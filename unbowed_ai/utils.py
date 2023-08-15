@@ -8,12 +8,14 @@ from PyPDF2 import PdfReader
 
 from .types import StrPath
 
+
 def name_in_text(name: str, text: str) -> bool:
     sname = name.strip()
     pattern = r"\b({0})\b(?!\w)".format(re.escape(sname))
     if re.search(pattern, text):
         return True
     return False
+
 
 def maybe_is_text(s: str, thresh: float = 2.5) -> bool:
     if len(s) == 0:
@@ -30,10 +32,12 @@ def maybe_is_text(s: str, thresh: float = 2.5) -> bool:
         return True
     return False
 
+
 def maybe_is_pdf(file: BinaryIO) -> bool:
     magic_number = file.read(4)
     file.seek(0)
     return magic_number == b"%PDF"
+
 
 def maybe_is_html(file: BinaryIO) -> bool:
     magic_number = file.read(4)
@@ -45,6 +49,7 @@ def maybe_is_html(file: BinaryIO) -> bool:
         or magic_number == b"<!X"
     )
 
+
 def strings_similarity(s1: str, s2: str) -> float:
     if len(s1) == 0 or len(s2) == 0:
         return 0
@@ -54,18 +59,21 @@ def strings_similarity(s1: str, s2: str) -> float:
     # return the similarity ratio
     return len(ss1.intersection(ss2)) / len(ss1.union(ss2))
 
+
 def count_pdf_pages(file_path: StrPath) -> int:
     with open(file_path, "rb") as pdf_file:
         pdf_reader = PdfReader(pdf_file)
         num_pages = len(pdf_reader.pages)
     return num_pages
 
+
 def md5sum(file_path: StrPath) -> str:
     import hashlib
 
     with open(file_path, "rb") as f:
         return hashlib.md5(f.read()).hexdigest()
-    
+
+
 async def gather_with_concurrency(n: int, *coros: List) -> List:
     # https://stackoverflow.com/a/61478547/2392535
     semaphore = asyncio.Semaphore(n)
@@ -75,6 +83,7 @@ async def gather_with_concurrency(n: int, *coros: List) -> List:
             return await coro
 
     return await asyncio.gather(*(sem_coro(c) for c in coros))
+
 
 def guess_is_4xx(msg: str) -> bool:
     if re.search(r"4\d\d", msg):

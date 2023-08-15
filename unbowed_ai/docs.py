@@ -1,5 +1,5 @@
 import asyncio
-import os 
+import os
 import re
 import sys
 import tempfile
@@ -58,7 +58,7 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
     # while also passing mypy checks
     @validator("llm", "summary_llm")
     def check_llm(cls, v: Union[BaseLanguageModel, str]) -> BaseLanguageModel:
-        if type(v) is str:
+        if isinstance(v, str):
             return ChatOpenAI(temperature=0.1, model=v, client=None)
         return cast(BaseLanguageModel, v)
 
@@ -95,9 +95,9 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
         summary_llm: Optional[Union[BaseLanguageModel, str]] = None,
     ) -> None:
         """Update the LLM for answering questions."""
-        if type(llm) is str:
+        if isinstance(llm, str):
             llm = ChatOpenAI(temperature=0.1, model=llm, client=None)
-        if type(summary_llm) is str:
+        if isinstance(summary_llm, str):
             summary_llm = ChatOpenAI(temperature=0.1, model=summary_llm, client=None)
         self.llm = cast(BaseLanguageModel, llm)
         if summary_llm is None:
