@@ -56,7 +56,7 @@ def make_chain(
     system_prompt: str = default_system_prompt,
 ) -> FallbackLLMChain:
     if memory and len(memory.load_memory_variables({})["memory"]) > 0:
-        # we copy the prompt so we don't modify the original
+        # copying the prompt so we don't modify the original
         # TODO: Figure out pipeline prompts to avoid this
         # the problem with pipeline prompts is that
         # the memory is a constant (or partial), not  a prompt
