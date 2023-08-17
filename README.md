@@ -75,6 +75,7 @@ It is not that sophisticated can only support csv of specific form. It more spec
 **Question** what do I have on Wednesday?
 
 **Response from Unbowed AI**
+
 On Wednesday, you have the following units scheduled:
 
 - From 7-9am: SCO 211 in LT2.
