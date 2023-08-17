@@ -204,4 +204,28 @@ if __name__ == "__main__":
     main()
 ```
 
+To run the above code run the following in the terminal:
+
+```bash
+streamlit run run.py
+```
+
+What you expect to see in the terminal
+
+```bash
+You can now view your Streamlit app in your browser.
+
+  Local URL: http://localhost:8501
+  Network URL: http://192.168.0.101:8501
+
+  For better performance, install the Watchdog module:
+
+  $ xcode-select --install
+  $ pip install watchdog
+
+Adding Introduction to C++ Programming
+Adding ALGORITHMS, FLOWCHARTS, DATA TYPES.
+timetable.csv added
+```
+
 That's it 😁
