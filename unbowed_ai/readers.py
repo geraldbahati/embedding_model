@@ -148,8 +148,10 @@ def _csv_to_timetable_text(df: pd.DataFrame) -> str:
         "6-7pm",
     ]
 
-    timetable_text = "Below is the timetable for Kenyatta University,"
-    +" Computer Science Course for 3rd year 1st Semester:\n\n"
+    timetable_text = (
+        "Below is the timetable for Kenyatta University,"
+        " Computer Science Course for 3rd year 1st Semester:\n\n"
+    )
 
     for _, row in df.iterrows():
         day = row["day"]
