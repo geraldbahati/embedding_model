@@ -1,7 +1,7 @@
-streamlit # for the web app
-pypdf2 # for pdf reading
-langchain # for language detection
-python-dotenv # for environment variables
+streamlit~=1.28.0
+pypdf2~=3.0.1
+langchain~=0.0.327
+python-dotenv~=1.0.0
 faiss-cpu # for similarity search
 openai # for text generation
 huggingface_hub # for text generation
@@ -11,16 +11,21 @@ sentence_transformers # for text generation
 python-docx # for doc reading
 textract # for doc reading
 python-pptx # for ppt reading
-pandas # for data manipulation
+pandas~=2.1.2
 xlrd # for excel reading
 openpyxl # for excel reading
 pytest # for testing
 pre-commit # for testing
-requests # for api calls
-pyzotero # for zotero api calls
+requests~=2.31.0
+pyzotero~=1.5.18
 pymupdf # for pdf reading
 build # for building
 types-requests # for api calls
-numpy # for data manipulation
-html2text # for html reading
+numpy~=1.26.1
+html2text~=2020.1.16
 nest_asyncio # for async calls
+
+opencv-python~=4.8.1.78
+pytesseract~=0.3.10
+setuptools~=68.2.2
+pydantic~=2.4.2
