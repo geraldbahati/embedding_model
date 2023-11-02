@@ -13,7 +13,7 @@ try:
     from pyzotero import zotero
 except ImportError:
     raise ImportError("Please install pyzotero: `pip install pyzotero`")
-from ..paths import PAPERQA_DIR
+from ..paths import UNBOWED_AI_PATH
 from ..types import StrPath
 from ..utils import count_pdf_pages
 
@@ -103,7 +103,7 @@ class ZoteroDB(zotero.Zotero):
         self.logger.info(f"Using library ID: {library_id} with type: {library_type}.")
 
         if storage is None:
-            storage = PAPERQA_DIR / "zotero"
+            storage = UNBOWED_AI_PATH / "zotero"
 
         self.logger.info(f"Using cache location: {storage}")
         self.storage = storage
