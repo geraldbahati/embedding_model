@@ -9,10 +9,10 @@ from pathlib import Path
 from typing import BinaryIO, Dict, List, Optional, Set, Union, cast
 
 from langchain.chat_models import ChatOpenAI
-from langchain.embeddings.base import Embeddings
 from langchain.embeddings.openai import OpenAIEmbeddings
 from langchain.memory import ConversationTokenBufferMemory
 from langchain.memory.chat_memory import BaseChatMemory
+from langchain.schema.embeddings import Embeddings
 from langchain.schema.language_model import BaseLanguageModel
 from langchain.schema.vectorstore import VectorStore
 from langchain.vectorstores import FAISS
@@ -28,6 +28,7 @@ from .readers import read_doc
 from .types import Answer, CallbackFactory, Context, Doc, DocKey, PromptCollection, Text
 from .utils import (
     gather_with_concurrency,
+    get_llm_name,
     guess_is_4xx,
     maybe_is_html,
     maybe_is_pdf,
@@ -288,7 +289,11 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
         self.deleted_dockeys.add(dockey)
 
     async def adoc_match(
-        self, query: str, k: int = 25, get_callbacks: CallbackFactory = lambda x: None
+        self,
+        query: str,
+        k: int = 25,
+        rerank: Optional[bool] = None,
+        get_callbacks: CallbackFactory = lambda x: None,
     ) -> Set[DocKey]:
         """Return a list of dockeys that match the query."""
         if self.doc_index is None:
@@ -313,14 +318,28 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
             matched_docs = [Doc(**m.metadata) for m in matches]
         if len(matched_docs) == 0:
             return set()
-        chain = make_chain(
-            self.prompts.select, cast(BaseLanguageModel, self.llm), skip_system=True
-        )
-        papers = [f"{d.docname}: {d.citation}" for d in matched_docs]
-        result = await chain.arun(  # type: ignore
-            question=query, papers="\n".join(papers), callbacks=get_callbacks("filter")
-        )
-        return set([d.dockey for d in matched_docs if d.docname in result])
+        # this only works for gpt-4 (in my testing)
+        try:
+            if (
+                rerank is None
+                and get_llm_name(cast(BaseLanguageModel, self.llm)).startswith("gpt-4")
+                or rerank is True
+            ):
+                chain = make_chain(
+                    self.prompts.select,
+                    cast(BaseLanguageModel, self.llm),
+                    skip_system=True,
+                )
+                papers = [f"{d.docname}: {d.citation}" for d in matched_docs]
+                result = await chain.arun(  # type: ignore
+                    question=query,
+                    papers="\n".join(papers),
+                    callbacks=get_callbacks("filter"),
+                )
+                return set([d.dockey for d in matched_docs if d.docname in result])
+        except AttributeError:
+            pass
+        return set([d.dockey for d in matched_docs])
 
     def __getstate__(self):
         state = self.__dict__.copy()
@@ -469,14 +488,17 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
                 citation = match.metadata["doc"]["citation"]
                 if detailed_citations:
                     citation = match.metadata["name"] + ": " + citation
-                context = await summary_chain.arun(
-                    question=answer.question,
-                    # Add name so chunk is stated
-                    citation=citation,
-                    summary_length=answer.summary_length,
-                    text=match.page_content,
-                    callbacks=callbacks,
-                )
+                if self.prompts.skip_summary:
+                    context = match.page_content
+                else:
+                    context = await summary_chain.arun(
+                        question=answer.question,
+                        # Add name so chunk is stated
+                        citation=citation,
+                        summary_length=answer.summary_length,
+                        text=match.page_content,
+                        callbacks=callbacks,
+                    )
             except Exception as e:
                 if guess_is_4xx(str(e)):
                     return None
@@ -522,7 +544,7 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
         context_str = "\n\n".join(
             [
                 f"{c.text.name}: {c.context}"
-                + (f" Based on {c.text.doc.citation}" if detailed_citations else "")
+                + (f"\n\n Based on {c.text.doc.citation}" if detailed_citations else "")
                 for c in answer.contexts
             ]
         )
@@ -607,7 +629,7 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
             pre = await chain.arun(
                 question=answer.question, callbacks=get_callbacks("pre")
             )
-            answer.context = pre + "\n\n" + answer.context
+            answer.context = answer.context + "\n\nExtra background information:" + pre
         bib = dict()
         if len(answer.context) < 10 and not self.memory:
             answer_text = (
@@ -626,6 +648,7 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
                 answer_length=answer.answer_length,
                 question=answer.question,
                 callbacks=callbacks,
+                verbose=True,
             )
         # it still happens
         if "(Example2012)" in answer_text:

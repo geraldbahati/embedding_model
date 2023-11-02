@@ -1,15 +1,19 @@
+# This file gets PDF files from the user's Zotero library
 import logging
 import os
 from pathlib import Path
 from typing import List, Optional, Union, cast
 
-from pydantic import BaseModel
+try:
+    from pydantic.v1 import BaseModel
+except ImportError:
+    from pydantic import BaseModel
 
 try:
     from pyzotero import zotero
 except ImportError:
     raise ImportError("Please install pyzotero: `pip install pyzotero`")
-from ..paths import UNBOWED_AI_PATH
+from ..paths import PAPERQA_DIR
 from ..types import StrPath
 from ..utils import count_pdf_pages
 
@@ -24,7 +28,7 @@ class ZoteroPaper(BaseModel):
     title : str
         The title of the item.
     pdf : Path
-        The path to the PDF for the item (pass to `unbowed-ai.Docs`)
+        The path to the PDF for the item (pass to `paperqa.Docs`)
     num_pages : int
         The number of pages in the PDF.
     zotero_key : str
@@ -50,7 +54,16 @@ class ZoteroPaper(BaseModel):
 
 
 class ZoteroDB(zotero.Zotero):
-    """An extension of pyzotero.zotero.Zotero to interface with unbowed-ai"""
+    """An extension of pyzotero.zotero.Zotero to interface with paperqa.
+
+    This class automatically reads in your `ZOTERO_USER_ID` and `ZOTERO_API_KEY`
+    from your environment variables. If you do not have these, see
+    step 2 of https://github.com/urschrei/pyzotero#quickstart.
+
+    This class will download PDFs from your Zotero library and store them in
+    `~/.paperqa/zotero` by default. To use this class, call the `iterate`
+    method, which returns a `paperqa.Docs` object.
+    """
 
     def __init__(
         self,
@@ -90,7 +103,7 @@ class ZoteroDB(zotero.Zotero):
         self.logger.info(f"Using library ID: {library_id} with type: {library_type}.")
 
         if storage is None:
-            storage = UNBOWED_AI_PATH / "zotero"
+            storage = PAPERQA_DIR / "zotero"
 
         self.logger.info(f"Using cache location: {storage}")
         self.storage = storage
@@ -142,9 +155,15 @@ class ZoteroDB(zotero.Zotero):
     ):
         """Given a search query, this will lazily iterate over papers in a Zotero library, downloading PDFs as needed.
 
+        This will download all PDFs in the query.
+        For information on parameters, see
+        https://pyzotero.readthedocs.io/en/latest/?badge=latest#zotero.Zotero.add_parameters
+        For extra information on the query, see
+        https://www.zotero.org/support/dev/web_api/v3/basics#search_syntax.
+
         For each item, it will return a `ZoteroPaper` object, which has the following fields:
 
-            - `pdf`: The path to the PDF for the item (pass to `unbowed-ai.Docs`)
+            - `pdf`: The path to the PDF for the item (pass to `paperqa.Docs`)
             - `key`: The citation key.
             - `title`: The title of the item.
             - `details`: The full item details from Zotero.

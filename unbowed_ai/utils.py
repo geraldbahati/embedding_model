@@ -4,7 +4,8 @@ import re
 import string
 from typing import BinaryIO, List
 
-from PyPDF2 import PdfReader
+import pypdf
+from langchain.base_language import BaseLanguageModel
 
 from .types import StrPath
 
@@ -62,7 +63,7 @@ def strings_similarity(s1: str, s2: str) -> float:
 
 def count_pdf_pages(file_path: StrPath) -> int:
     with open(file_path, "rb") as pdf_file:
-        pdf_reader = PdfReader(pdf_file)
+        pdf_reader = pypdf.PdfReader(pdf_file)
         num_pages = len(pdf_reader.pages)
     return num_pages
 
@@ -89,3 +90,10 @@ def guess_is_4xx(msg: str) -> bool:
     if re.search(r"4\d\d", msg):
         return True
     return False
+
+
+def get_llm_name(llm: BaseLanguageModel) -> str:
+    try:
+        return llm.model_name  # type: ignore
+    except AttributeError:
+        return llm.model  # type: ignore

@@ -42,10 +42,10 @@ def parse_pdf_fitz(path: Path, doc: Doc, chunk_chars: int, overlap: int) -> List
 
 
 def parse_pdf(path: Path, doc: Doc, chunk_chars: int, overlap: int) -> List[Text]:
-    from PyPDF2 import PdfReader
+    import pypdf
 
     pdfFileObj = open(path, "rb")
-    pdfReader = PdfReader(pdfFileObj)
+    pdfReader = pypdf.PdfReader(pdfFileObj)
     split = ""
     pages: List[str] = []
     texts: List[Text] = []

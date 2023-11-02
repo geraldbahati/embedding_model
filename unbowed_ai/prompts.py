@@ -2,15 +2,16 @@ from langchain.prompts import PromptTemplate
 
 summary_prompt = PromptTemplate(
     input_variables=["text", "citation", "question", "summary_length"],
-    template="Summarize the text below to help answer the question. "
+    template="Summarize the text below to help answer a question. "
     "Do not directly answer the question, instead summarize "
     "to give evidence to help answer the question. "
+    "Focus on specific details, including numbers, equations, or specific quotes. "
     'Reply "Not applicable" if text is irrelevant. '
     "Use {summary_length}. At the end of your response, provide a score from 1-10 on a newline "
     "indicating relevance to question. Do not explain your score. "
     "\n\n"
     "{text}\n\n"
-    "Except from {citation}\n"
+    "Excerpt from {citation}\n"
     "Question: {question}\n"
     "Relevant Information Summary:",
 )
@@ -42,7 +43,6 @@ select_paper_prompt = PromptTemplate(
 )
 
 # We are unable to serialize with partial variables
-# so TODO: update year next year
 citation_prompt = PromptTemplate(
     input_variables=["text"],
     template="Provide the citation for the following text in MLA Format. The year is 2023\n"
@@ -51,10 +51,7 @@ citation_prompt = PromptTemplate(
 )
 
 default_system_prompt = (
-    "Answer in an direct, concise, scholarly tone. "
+    "Answer in a direct and concise tone. "
+    "Your audience is an expert, so be highly specific. "
     "If there are ambiguous terms or acronyms, first define them. "
 )
-
-
-# Trying to serialize csv files for timetable
-# so TODO: make prompt for timetable

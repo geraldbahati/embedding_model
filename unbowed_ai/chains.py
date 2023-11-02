@@ -9,7 +9,7 @@ from langchain.callbacks.manager import (
 from langchain.chains import LLMChain
 from langchain.chat_models import ChatOpenAI
 from langchain.memory.chat_memory import BaseChatMemory
-from langchain.prompts import BasePromptTemplate, PromptTemplate, StringPromptTemplate
+from langchain.prompts import PromptTemplate, StringPromptTemplate
 from langchain.prompts.chat import ChatPromptTemplate, HumanMessagePromptTemplate
 from langchain.schema import LLMResult, SystemMessage
 
@@ -45,7 +45,7 @@ class FallbackLLMChain(LLMChain):
 
 
 class ExtendedHumanMessagePromptTemplate(HumanMessagePromptTemplate):
-    prompt: BasePromptTemplate
+    prompt: StringPromptTemplate
 
 
 def make_chain(
@@ -56,7 +56,7 @@ def make_chain(
     system_prompt: str = default_system_prompt,
 ) -> FallbackLLMChain:
     if memory and len(memory.load_memory_variables({})["memory"]) > 0:
-        # copying the prompt so we don't modify the original
+        # we copy the prompt so we don't modify the original
         # TODO: Figure out pipeline prompts to avoid this
         # the problem with pipeline prompts is that
         # the memory is a constant (or partial), not  a prompt
