@@ -35,6 +35,7 @@ from .utils import (
     maybe_is_text,
     md5sum,
     name_in_text,
+    strip_citations,
 )
 
 
@@ -59,6 +60,8 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
     memory: bool = False
     memory_model: Optional[BaseChatMemory] = None
     jit_texts_index: bool = False
+    # This is used to strip indirect citations that come up from the summary llm
+    strip_citations: bool = True
 
     # TODO: Not sure how to get this to work
     # while also passing mypy checks
@@ -184,6 +187,7 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
         if dockey is None:
             dockey = md5sum(path)
         if citation is None:
+            # skip system because it's too hesitant to answer
             cite_chain = make_chain(
                 prompt=self.prompts.cite,
                 llm=cast(BaseLanguageModel, self.summary_llm),
@@ -236,6 +240,10 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
         texts: List[Text],
         doc: Doc,
     ) -> bool:
+        """Add chunked texts to the collection. This is useful if you have already chunked the texts yourself.
+
+        Returns True if the document was added, False if it was already in the collection.
+        """
         if doc.dockey in self.docs:
             return False
         if len(texts) == 0:
@@ -500,6 +508,9 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
                 raise e
             if "not applicable" in context.lower() or "not relevant" in context.lower():
                 return None
+            if self.strip_citations:
+                # remove citations that collide with our grounded citations (for the answer LLM)
+                context = strip_citations(context)
             c = Context(
                 context=context,
                 text=Text(
@@ -655,7 +666,7 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
             if name_in_text(name, answer_text):
                 bib[name] = citation
         bib_str = "\n\n".join(
-            [f"{i+1}. ({k}): {c}" for i, (k, c) in enumerate(bib.items())]
+            [f"{i + 1}. ({k}): {c}" for i, (k, c) in enumerate(bib.items())]
         )
         formatted_answer = f"Question: {answer.question}\n\n{answer_text}\n"
         if len(bib) > 0:

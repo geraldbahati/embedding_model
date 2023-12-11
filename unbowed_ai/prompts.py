@@ -43,6 +43,7 @@ select_paper_prompt = PromptTemplate(
 )
 
 # We are unable to serialize with partial variables
+# so TODO: update year next year
 citation_prompt = PromptTemplate(
     input_variables=["text"],
     template="Provide the citation for the following text in MLA Format. The year is 2023\n"
