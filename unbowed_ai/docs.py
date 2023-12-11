@@ -184,7 +184,6 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
         if dockey is None:
             dockey = md5sum(path)
         if citation is None:
-            # skip system because it's too hesitant to answer
             cite_chain = make_chain(
                 prompt=self.prompts.cite,
                 llm=cast(BaseLanguageModel, self.summary_llm),
@@ -237,10 +236,6 @@ class Docs(BaseModel, arbitrary_types_allowed=True, smart_union=True):
         texts: List[Text],
         doc: Doc,
     ) -> bool:
-        """Add chunked texts to the collection. This is useful if you have already chunked the texts yourself.
-
-        Returns True if the document was added, False if it was already in the collection.
-        """
         if doc.dockey in self.docs:
             return False
         if len(texts) == 0:

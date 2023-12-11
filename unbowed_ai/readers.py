@@ -226,7 +226,7 @@ def parse_timetable_csv(
     df = pd.read_csv(path)
     timetable_text = _csv_to_timetable_text(df)
 
-    # Check if the timetable text excceds the chunk size
+    # Check if the timetable text exceeds the chunk size
     texts: List[Text] = []
     start = 0
     while start < len(timetable_text):
